@@ -302,12 +302,13 @@
                         placeholder="Buscar palavra no dicionário..."
                         class="w-full p-4 rounded-md border border-neutral-border bg-white focus:outline-none focus:ring-2 focus:ring-primary-accent"
                         onkeyup="searchDictionary()"></div>
-            <div class="mb-8 flex gap-4">
-                <button onclick="downloadDictJSON()" class="secondary-button py-2 px-6"
-                    data-translate-key="download_json_button">Baixar JSON</button>
-                <button onclick="downloadDictCSV()" class="primary-button py-2 px-6" data-translate-key="download_csv_button">Baixar
-                    CSV</button>
-            </div>
+                <div class="mb-8 flex gap-4">
+                    <button onclick="downloadDictJSON()" class="secondary-button py-2 px-6"
+                        data-translate-key="download_json_button">Baixar JSON</button>
+                    <button onclick="downloadDictCSV()" class="primary-button py-2 px-6"
+                        data-translate-key="download_csv_button">Baixar
+                        CSV</button>
+                </div>
                 <div id="dictContainer" class="space-y-3 max-h-96 overflow-y-auto">
                     <p class="text-gray-600 italic" data-translate-key="loading_dict">Carregando dicionário...</p>
                 </div>
@@ -320,12 +321,12 @@
                         placeholder="Buscar frase no corpus..."
                         class="w-full p-4 rounded-md border border-neutral-border bg-white focus:outline-none focus:ring-2 focus:ring-primary-accent"
                         onkeyup="searchCorpus()"></div>
-        <div class="mb-8 flex gap-4">
-            <button onclick="downloadCorpusJSON()" class="secondary-button py-2 px-6"
-                data-translate-key="download_json_button">Baixar JSON</button>
-            <button onclick="downloadCorpusCSV()" class="primary-button py-2 px-6"
-                data-translate-key="download_csv_button">Baixar CSV</button>
-        </div>
+                <div class="mb-8 flex gap-4">
+                    <button onclick="downloadCorpusJSON()" class="secondary-button py-2 px-6"
+                        data-translate-key="download_json_button">Baixar JSON</button>
+                    <button onclick="downloadCorpusCSV()" class="primary-button py-2 px-6"
+                        data-translate-key="download_csv_button">Baixar CSV</button>
+                </div>
                 <div id="corpusContainer" class="space-y-4 max-h-96 overflow-y-auto">
                     <p class="text-gray-600 italic" data-translate-key="loading_corpus">Carregando corpus...</p>
                 </div>
@@ -546,57 +547,56 @@
         function searchDictionary() { console.log("Buscando no dicionário..."); }
         function searchCorpus() { console.log("Buscando no corpus..."); }
 
-        
-
-    // ============================================
-    // LÓGICA DE DOWNLOAD (JSON E CSV)
-    // ============================================
-
-    function triggerDownload(blob, filename) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    // --- Funções de Download JSON ---
-    function downloadDictJSON() { triggerDownload(new Blob([JSON.stringify(currentData.dict, null, 2)], { type: 'application/json' }), 'dict_bidayo.json'); }
-    function downloadCorpusJSON() { triggerDownload(new Blob([JSON.stringify(currentData.corpus, null, 2)], { type: 'application/json' }), 'bidayo.json'); }
-    function downloadGrammarJSON() { triggerDownload(new Blob([JSON.stringify(currentData.grammar, null, 2)], { type: 'application/json' }), 'grammar_rules.json'); }
-
-    // --- Funções de Download CSV ---
-    function downloadDictCSV() {
-        const headers = 'word,translation\n';
-        const rows = Object.entries(currentData.dict).map(([word, trans]) => `"${word.replace(/"/g, '""')}","${trans.replace(/"/g, '""')}"`).join('\n');
-        triggerDownload(new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' }), 'dict_bidayo.csv');
-    }
-
-    function downloadCorpusCSV() {
-        const headers = 'source,target\n';
-        const rows = (currentData.corpus.pairs || []).map(p => `"${p.source.replace(/"/g, '""')}","${p.target.replace(/"/g, '""')}"`).join('\n');
-        triggerDownload(new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' }), 'bidayo.csv');
-    }
-
-    function downloadGrammarCSV() {
-        const headers = 'rule,explanation,example_english,example_bidaio\n';
-        const rows = (currentData.grammar.rules || []).map(r => `"${r.rule.replace(/"/g, '""')}","${r.explanation.replace(/"/g, '""')}","${r.example_english.replace(/"/g, '""')}","${r.example_bidaio.replace(/"/g, '""')}"`).join('\n');
-        triggerDownload(new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' }), 'grammar_rules.csv');
-    }
-
-    async function downloadAllFiles() {
-        downloadDictJSON();
-        await new Promise(r => setTimeout(r, 200));
-        downloadCorpusJSON();
-        await new Promise(r => setTimeout(r, 200));
-        downloadGrammarJSON();
-    }
 
 
-        // --- INICIALIZAÇÃO DA PÁGINA ---
+        // ============================================
+        // LÓGICA DE DOWNLOAD (JSON E CSV)
+        // ============================================
+
+        function triggerDownload(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // --- Funções de Download JSON ---
+        function downloadDictJSON() { triggerDownload(new Blob([JSON.stringify(currentData.dict, null, 2)], { type: 'application/json' }), 'dict_bidayo.json'); }
+        function downloadCorpusJSON() { triggerDownload(new Blob([JSON.stringify(currentData.corpus, null, 2)], { type: 'application/json' }), 'bidayo.json'); }
+        function downloadGrammarJSON() { triggerDownload(new Blob([JSON.stringify(currentData.grammar, null, 2)], { type: 'application/json' }), 'grammar_rules.json'); }
+
+        // --- Funções de Download CSV ---
+        function downloadDictCSV() {
+            const headers = 'word,translation\n';
+            const rows = Object.entries(currentData.dict).map(([word, trans]) => `"${word.replace(/"/g, '""')}","${trans.replace(/"/g, '""')}"`).join('\n');
+            triggerDownload(new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' }), 'dict_bidayo.csv');
+        }
+
+        function downloadCorpusCSV() {
+            const headers = 'source,target\n';
+            const rows = (currentData.corpus.pairs || []).map(p => `"${p.source.replace(/"/g, '""')}","${p.target.replace(/"/g, '""')}"`).join('\n');
+            triggerDownload(new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' }), 'bidayo.csv');
+        }
+
+        function downloadGrammarCSV() {
+            const headers = 'rule,explanation,example_english,example_bidaio\n';
+            const rows = (currentData.grammar.rules || []).map(r => `"${r.rule.replace(/"/g, '""')}","${r.explanation.replace(/"/g, '""')}","${r.example_english.replace(/"/g, '""')}","${r.example_bidaio.replace(/"/g, '""')}"`).join('\n');
+            triggerDownload(new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' }), 'grammar_rules.csv');
+        }
+
+        async function downloadAllFiles() {
+            downloadDictJSON();
+            await new Promise(r => setTimeout(r, 200));
+            downloadCorpusJSON();
+            await new Promise(r => setTimeout(r, 200));
+            downloadGrammarJSON();
+        }
+
+
         document.addEventListener('DOMContentLoaded', () => {
             changeLanguage(currentLanguage); // Define o idioma inicial
             switchTab('translator'); // Define a aba inicial
