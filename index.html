@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tradutor Bidaio Jagoy - Plataforma de IA</title>
+
+    <!-- Google Fonts: Crimson Text & Lato -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&family=Lato:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuração do Tailwind para o novo tema formal
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#0D2C4D',      // Azul Marinho Sóbrio
+                        'primary-accent': '#B49B6C',    // Dourado Mudo
+                        'neutral-bg': '#F8F9FA',        // Cinza de Fundo Claro
+                        'neutral-card': '#FFFFFF',      // Branco para Cards
+                        'neutral-text': '#343A40',      // Cinza Escuro para Texto
+                        'neutral-border': '#DEE2E6',    // Cinza para Bordas
+                    },
+                    fontFamily: {
+                        'serif': ['Crimson Text', 'serif'],
+                        'sans': ['Lato', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos personalizados para o tema formal */
+        body {
+            background-color: #F8F9FA;
+            min-height: 100vh;
+            font-family: 'Lato', sans-serif;
+            color: #343A40;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Crimson Text', serif;
+            font-weight: 700;
+            color: #0D2C4D;
+        }
+
+        .formal-card {
+            background: #FFFFFF;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #DEE2E6;
+        }
+
+        .primary-button {
+            background-color: #0D2C4D;
+            color: white;
+            border-radius: 0.375rem;
+            font-weight: 700;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .primary-button:hover {
+            background-color: #1a4a82;
+        }
+
+        .secondary-button {
+            background-color: #f1f3f5;
+            color: #343A40;
+            border: 1px solid #DEE2E6;
+            border-radius: 0.375rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-button:hover {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+        }
+
+        .example-card {
+            background: #FFFFFF;
+            border-left: 4px solid #B49B6C;
+            border-radius: 0.375rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid #DEE2E6;
+        }
+
+        .confidence-bar {
+            background: #E9ECEF;
+            border-radius: 9999px;
+            height: 1.25rem;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            background: #0D2C4D;
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            border-radius: 0;
+            color: #6c757d;
+        }
+
+        .tab-button:hover {
+            color: #0D2C4D;
+        }
+
+        .tab-button.active {
+            color: #0D2C4D;
+            border-bottom-color: #0D2C4D;
+        }
+
+        /* Estilos para o Seletor de Idioma */
+        .lang-dropdown-menu {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border: 1px solid #DEE2E6;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Seletor de Idioma -->
+        <div class="flex justify-end mb-4">
+            <div class="relative">
+                <button id="lang-selector-btn" onclick="toggleLangDropdown()"
+                    class="secondary-button py-2 px-4 flex items-center gap-2">
+                    <span id="current-lang-text">Português</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div id="lang-dropdown"
+                    class="lang-dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md z-10">
+                    <a href="#" onclick="changeLanguage('pt')"
+                        class="block px-4 py-2 text-sm text-neutral-text hover:bg-neutral-bg">Português</a>
+                    <a href="#" onclick="changeLanguage('en')"
+                        class="block px-4 py-2 text-sm text-neutral-text hover:bg-neutral-bg">English</a>
+                    <a href="#" onclick="changeLanguage('id')"
+                        class="block px-4 py-2 text-sm text-neutral-text hover:bg-neutral-bg">Bahasa Indonesia</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl md:text-6xl font-serif mb-2" data-translate-key="main_title">
+                Tradutor Bidaio Jagoy
+            </h1>
+            <p class="text-lg text-neutral-text font-sans" data-translate-key="main_subtitle">
+                Plataforma de Tradução com IA • Edição de Dados em Tempo Real
+            </p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex gap-3 mb-8 justify-center flex-wrap border-b border-neutral-border">
+            <button class="tab-button active" onclick="switchTab('translator')"
+                data-translate-key="tab_translator">Tradutor</button>
+            <button class="tab-button" onclick="switchTab('dictionary')"
+                data-translate-key="tab_dictionary">Dicionário</button>
+            <button class="tab-button" onclick="switchTab('corpus')" data-translate-key="tab_corpus">Corpus</button>
+            <button class="tab-button" onclick="switchTab('grammar')"
+                data-translate-key="tab_grammar">Gramática</button>
+        </div>
+
+        <!-- TAB 1: TRADUTOR -->
+        <div id="tab-translator" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Tradutor Principal -->
+                <div class="lg:col-span-2">
+                    <div class="formal-card p-8">
+                        <h2 class="text-3xl font-serif mb-6" data-translate-key="translate_title">Traduzir Texto</h2>
+                        <textarea id="inputText" data-translate-key="placeholder_input"
+                            placeholder="Digite seu texto em Português, Inglês ou Indonésio aqui..."
+                            class="w-full h-40 p-4 rounded-md border border-neutral-border bg-white focus:outline-none focus:ring-2 focus:ring-primary-accent resize-none"></textarea>
+                        <button id="translateBtn" onclick="handleTranslate()"
+                            class="primary-button w-full mt-6 py-4 text-lg"
+                            data-translate-key="translate_button">Traduzir</button>
+                    </div>
+
+                    <!-- Resultado -->
+                    <div id="resultContainer" class="hidden mt-8">
+                        <div class="formal-card p-8">
+                            <h3 class="text-2xl font-serif mb-6" data-translate-key="result_title">Resultado da Tradução
+                            </h3>
+                            <div class="mb-8">
+                                <label class="block text-sm font-semibold text-neutral-text mb-3"
+                                    data-translate-key="confidence_label">Nível de Confiança</label>
+                                <div class="flex items-center gap-4">
+                                    <div class="confidence-bar flex-1">
+                                        <div id="confidenceFill" class="confidence-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span id="confidenceText" class="text-lg font-bold text-primary-dark">0/5</span>
+                                </div>
+                            </div>
+                            <div class="mb-8">
+                                <label class="block text-sm font-semibold text-neutral-text mb-3"
+                                    data-translate-key="bidaio_translation_label">Tradução em Bidaio</label>
+                                <p id="translationText"
+                                    class="text-xl font-serif text-primary-dark bg-neutral-bg p-6 rounded-md border border-neutral-border">
+                                </p>
+                            </div>
+                            <div class="mb-8">
+                                <label class="block text-sm font-semibold text-neutral-text mb-3"
+                                    data-translate-key="correction_label">Sugerir Correção</label>
+                                <textarea id="correctionText" data-translate-key="placeholder_correction"
+                                    placeholder="Se a tradução pode ser melhorada, por favor, sugira uma correção aqui..."
+                                    class="w-full h-24 p-4 rounded-md border border-neutral-border bg-white focus:outline-none focus:ring-2 focus:ring-primary-accent resize-none"></textarea>
+                                <button onclick="submitCorrection()" class="secondary-button w-full mt-3 py-2"
+                                    data-translate-key="send_correction_button">Enviar Correção</button>
+                            </div>
+                            <details class="border-t border-neutral-border pt-6">
+                                <summary
+                                    class="cursor-pointer font-serif text-lg text-primary-dark hover:text-primary-accent"
+                                    data-translate-key="reasoning_summary">Análise da Tradução</summary>
+                                <p id="reasoningText"
+                                    class="mt-4 text-sm text-neutral-text bg-neutral-bg p-4 rounded-md whitespace-pre-wrap">
+                                </p>
+                            </details>
+
+                            <details class="border-t border-neutral-border pt-6">
+                                <summary
+                                    class="cursor-pointer font-serif text-lg text-primary-dark hover:text-primary-accent">
+                                    Prompt Completo
+                                    (Debug)</summary>
+                                <pre id="fullPromptText" class="mt-4 text-xs text-neutral-text bg-neutral-bg p-4 rounded-md whitespace-pre-wrap
+                                overflow-auto max-h-96"></pre>
+                            </details>
+                            <div class="flex gap-4 mt-8">
+                                <button onclick="copyToClipboard()" class="primary-button flex-1 py-3"
+                                    data-translate-key="copy_button">Copiar</button>
+                                <button onclick="downloadTranslation()" class="secondary-button flex-1 py-3"
+                                    data-translate-key="download_button">Baixar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <h3 class="text-2xl font-serif mb-4" data-translate-key="examples_title">Exemplos Similares do
+                            Corpus</h3>
+                        <div id="examplesContainer" class="space-y-4">
+                            <p class="text-gray-600 italic" data-translate-key="examples_placeholder">Insira um texto e
+                                clique em "Traduzir" para visualizar exemplos relacionados.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div>
+                    <div class="formal-card p-8 sticky top-8">
+                        <h3 class="text-2xl font-serif mb-6" data-translate-key="status_title">Status do Sistema</h3>
+                        <div class="space-y-4 text-sm">
+                            <div><label class="font-semibold text-neutral-text"
+                                    data-translate-key="status_dict">Dicionário:</label>
+                                <p id="dictStats" class="text-gray-600">Carregando...</p>
+                            </div>
+                            <div><label class="font-semibold text-neutral-text"
+                                    data-translate-key="status_corpus">Corpus:</label>
+                                <p id="corpusStats" class="text-gray-600">Carregando...</p>
+                            </div>
+                            <div><label class="font-semibold text-neutral-text"
+                                    data-translate-key="status_grammar">Regras Gramaticais:</label>
+                                <p id="grammarStats" class="text-gray-600">Carregando...</p>
+                            </div>
+                            <div><label class="font-semibold text-neutral-text" data-translate-key="status_api">API
+                                    Status:</label>
+                                <p id="apiStatus" class="text-gray-600">Verificando...</p>
+                            </div>
+                        </div>
+                        <hr class="my-6 border-neutral-border">
+                        <button onclick="downloadAllFiles()" class="secondary-button w-full py-2 text-sm"
+                            data-translate-key="download_all_button">Baixar Todos os Arquivos</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Outras abas (Dicionário, Corpus, Gramática) com chaves de tradução -->
+        <div id="tab-dictionary" class="tab-content hidden">
+            <div class="formal-card p-8">
+                <h2 class="text-3xl font-serif mb-6" data-translate-key="dict_title">Gerenciar Dicionário</h2>
+                <div class="mb-8"><input type="text" id="dictSearch" data-translate-key="placeholder_dict_search"
+                        placeholder="Buscar palavra no dicionário..."
+                        class="w-full p-4 rounded-md border border-neutral-border bg-white focus:outline-none focus:ring-2 focus:ring-primary-accent"
+                        onkeyup="searchDictionary()"></div>
+            <div class="mb-8 flex gap-4">
+                <button onclick="downloadDictJSON()" class="secondary-button py-2 px-6"
+                    data-translate-key="download_json_button">Baixar JSON</button>
+                <button onclick="downloadDictCSV()" class="primary-button py-2 px-6" data-translate-key="download_csv_button">Baixar
+                    CSV</button>
+            </div>
+                <div id="dictContainer" class="space-y-3 max-h-96 overflow-y-auto">
+                    <p class="text-gray-600 italic" data-translate-key="loading_dict">Carregando dicionário...</p>
+                </div>
+            </div>
+        </div>
+        <div id="tab-corpus" class="tab-content hidden">
+            <div class="formal-card p-8">
+                <h2 class="text-3xl font-serif mb-6" data-translate-key="corpus_title">Gerenciar Corpus</h2>
+                <div class="mb-8"><input type="text" id="corpusSearch" data-translate-key="placeholder_corpus_search"
+                        placeholder="Buscar frase no corpus..."
+                        class="w-full p-4 rounded-md border border-neutral-border bg-white focus:outline-none focus:ring-2 focus:ring-primary-accent"
+                        onkeyup="searchCorpus()"></div>
+        <div class="mb-8 flex gap-4">
+            <button onclick="downloadCorpusJSON()" class="secondary-button py-2 px-6"
+                data-translate-key="download_json_button">Baixar JSON</button>
+            <button onclick="downloadCorpusCSV()" class="primary-button py-2 px-6"
+                data-translate-key="download_csv_button">Baixar CSV</button>
+        </div>
+                <div id="corpusContainer" class="space-y-4 max-h-96 overflow-y-auto">
+                    <p class="text-gray-600 italic" data-translate-key="loading_corpus">Carregando corpus...</p>
+                </div>
+            </div>
+        </div>
+        <div id="tab-grammar" class="tab-content hidden">
+            <div class="formal-card p-8">
+                <h2 class="text-3xl font-serif mb-6" data-translate-key="grammar_title">Regras Gramaticais</h2>
+                <div class="mb-8 flex gap-4">
+                    <button onclick="downloadGrammarJSON()" class="secondary-button py-2 px-6"
+                        data-translate-key="download_json_button">Baixar JSON</button>
+                    <button onclick="downloadGrammarCSV()" class="primary-button py-2 px-6"
+                        data-translate-key="download_csv_button">Baixar CSV</button>
+                </div>
+                <div id="grammarContainer" class="space-y-4 max-h-96 overflow-y-auto">
+                    <p class="text-gray-600 italic" data-translate-key="loading_grammar">Carregando regras
+                        gramaticais...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DADOS DE TRADUÇÃO DA INTERFACE ---
+        const translations = {
+            'pt': {
+                'main_title': 'Tradutor Bidaio Jagoy',
+                'main_subtitle': 'Plataforma de Tradução com IA • Edição de Dados em Tempo Real',
+                'tab_translator': 'Tradutor',
+                'tab_dictionary': 'Dicionário',
+                'tab_corpus': 'Corpus',
+                'tab_grammar': 'Gramática',
+                'translate_title': 'Traduzir Texto',
+                'placeholder_input': 'Digite seu texto em Português, Inglês ou Indonésio aqui...',
+                'translate_button': 'Traduzir',
+                'result_title': 'Resultado da Tradução',
+                'confidence_label': 'Nível de Confiança',
+                'bidaio_translation_label': 'Tradução em Bidaio',
+                'correction_label': 'Sugerir Correção',
+                'placeholder_correction': 'Se a tradução pode ser melhorada, por favor, sugira uma correção aqui...',
+                'send_correction_button': 'Enviar Correção',
+                'reasoning_summary': 'Análise da Tradução',
+                'copy_button': 'Copiar',
+                'download_button': 'Baixar',
+                'examples_title': 'Exemplos Similares do Corpus',
+                'examples_placeholder': 'Insira um texto e clique em "Traduzir" para visualizar exemplos relacionados.',
+                'status_title': 'Status do Sistema',
+                'status_dict': 'Dicionário:',
+                'status_corpus': 'Corpus:',
+                'status_grammar': 'Regras Gramaticais:',
+                'status_api': 'API Status:',
+                'download_all_button': 'Baixar Todos os Arquivos',
+                'dict_title': 'Gerenciar Dicionário',
+                'placeholder_dict_search': 'Buscar palavra no dicionário...',
+                'download_json_button': 'Baixar JSON',
+                'upload_json_button': 'Upload JSON',
+                'loading_dict': 'Carregando dicionário...',
+                'corpus_title': 'Gerenciar Corpus',
+                'placeholder_corpus_search': 'Buscar frase no corpus...',
+                'loading_corpus': 'Carregando corpus...',
+                'grammar_title': 'Regras Gramaticais',
+                'loading_grammar': 'Carregando regras gramaticais...',
+                'current_lang_text': 'Português',
+                'send_correction_button': 'Enviar Correção',
+                'correction_sent': 'Correção Enviada!',
+                'sending_correction': 'Enviando...',
+                'correction_empty_error': 'O campo de correção não pode estar vazio.',
+                'correction_send_error': 'Erro ao enviar correção.',
+            },
+            'en': {
+                'main_title': 'Bidaio Jagoy Translator',
+                'main_subtitle': 'AI Translation Platform • Real-time Data Editing',
+                'tab_translator': 'Translator',
+                'tab_dictionary': 'Dictionary',
+                'tab_corpus': 'Corpus',
+                'tab_grammar': 'Grammar',
+                'translate_title': 'Translate Text',
+                'placeholder_input': 'Enter your text in Portuguese, English, or Indonesian here...',
+                'translate_button': 'Translate',
+                'result_title': 'Translation Result',
+                'confidence_label': 'Confidence Level',
+                'bidaio_translation_label': 'Translation in Bidaio',
+                'correction_label': 'Suggest Correction',
+                'placeholder_correction': 'If the translation can be improved, please suggest a correction here...',
+                'send_correction_button': 'Send Correction',
+                'reasoning_summary': 'Translation Analysis',
+                'copy_button': 'Copy',
+                'download_button': 'Download',
+                'examples_title': 'Similar Examples from Corpus',
+                'examples_placeholder': 'Enter text and click "Translate" to view related examples.',
+                'status_title': 'System Status',
+                'status_dict': 'Dictionary:',
+                'status_corpus': 'Corpus:',
+                'status_grammar': 'Grammar Rules:',
+                'status_api': 'API Status:',
+                'download_all_button': 'Download All Files',
+                'dict_title': 'Manage Dictionary',
+                'placeholder_dict_search': 'Search for a word in the dictionary...',
+                'download_json_button': 'Download JSON',
+                'upload_json_button': 'Upload JSON',
+                'loading_dict': 'Loading dictionary...',
+                'corpus_title': 'Manage Corpus',
+                'placeholder_corpus_search': 'Search for a phrase in the corpus...',
+                'loading_corpus': 'Loading corpus...',
+                'grammar_title': 'Grammar Rules',
+                'loading_grammar': 'Loading grammar rules...',
+                'current_lang_text': 'English',
+                'send_correction_button': 'Send Correction',
+                'correction_sent': 'Correction Sent!',
+                'sending_correction': 'Sending...',
+                'correction_empty_error': 'The correction field cannot be empty.',
+                'correction_send_error': 'Error sending correction.',
+            },
+            'id': {
+                'main_title': 'Penerjemah Bidaio Jagoy',
+                'main_subtitle': 'Platform Terjemahan AI • Pengeditan Data Real-time',
+                'tab_translator': 'Penerjemah',
+                'tab_dictionary': 'Kamus',
+                'tab_corpus': 'Korpus',
+                'tab_grammar': 'Tata Bahasa',
+                'translate_title': 'Terjemahkan Teks',
+                'placeholder_input': 'Masukkan teks Anda dalam Bahasa Portugis, Inggris, atau Indonesia di sini...',
+                'translate_button': 'Terjemahkan',
+                'result_title': 'Hasil Terjemahan',
+                'confidence_label': 'Tingkat Keyakinan',
+                'bidaio_translation_label': 'Terjemahan dalam Bidaio',
+                'correction_label': 'Sarankan Koreksi',
+                'placeholder_correction': 'Jika terjemahan dapat diperbaiki, silakan sarankan koreksi di sini...',
+                'send_correction_button': 'Kirim Koreksi',
+                'reasoning_summary': 'Analisis Terjemahan',
+                'copy_button': 'Salin',
+                'download_button': 'Unduh',
+                'examples_title': 'Contoh Serupa dari Korpus',
+                'examples_placeholder': 'Masukkan teks dan klik "Terjemahkan" untuk melihat contoh terkait.',
+                'status_title': 'Status Sistem',
+                'status_dict': 'Kamus:',
+                'status_corpus': 'Korpus:',
+                'status_grammar': 'Aturan Tata Bahasa:',
+                'status_api': 'Status API:',
+                'download_all_button': 'Unduh Semua File',
+                'dict_title': 'Kelola Kamus',
+                'placeholder_dict_search': 'Cari kata di kamus...',
+                'download_json_button': 'Unduh JSON',
+                'upload_json_button': 'Unggah JSON',
+                'loading_dict': 'Memuat kamus...',
+                'corpus_title': 'Kelola Korpus',
+                'placeholder_corpus_search': 'Cari frasa di korpus...',
+                'loading_corpus': 'Memuat korpus...',
+                'grammar_title': 'Aturan Tata Bahasa',
+                'loading_grammar': 'Memuat aturan tata bahasa...',
+                'current_lang_text': 'Bahasa Indonesia',
+                'send_correction_button': 'Kirim Koreksi',
+                'correction_sent': 'Koreksi Terkirim!',
+                'sending_correction': 'Mengirim...',
+                'correction_empty_error': 'Kolom koreksi tidak boleh kosong.',
+                'correction_send_error': 'Gagal mengirim koreksi.',
+            }
+        };
+
+        let currentLanguage = 'pt'; // Idioma padrão
+
+        // --- LÓGICA DO SELETOR DE IDIOMA ---
+        const langDropdown = document.getElementById('lang-dropdown');
+
+        function toggleLangDropdown() {
+            langDropdown.classList.toggle('hidden');
+        }
+
+        function changeLanguage(lang) {
+            event.preventDefault();
+            currentLanguage = lang;
+            const translationSet = translations[lang];
+
+            document.querySelectorAll('[data-translate-key]').forEach(element => {
+                const key = element.getAttribute('data-translate-key');
+                if (translationSet[key]) {
+                    if (element.placeholder !== undefined) {
+                        element.placeholder = translationSet[key];
+                    } else {
+                        element.textContent = translationSet[key];
+                    }
+                }
+            });
+
+            // Atualiza o texto do botão principal do seletor
+            document.getElementById('current-lang-text').textContent = translationSet['current_lang_text'];
+
+            // Fecha o dropdown após a seleção
+            langDropdown.classList.add('hidden');
+            document.documentElement.lang = lang.split('-')[0]; // Atualiza o atributo lang do HTML
+        }
+
+        // Fecha o dropdown se clicar fora dele
+        window.onclick = function (event) {
+            if (!event.target.matches('#lang-selector-btn') && !event.target.closest('#lang-selector-btn')) {
+                if (!langDropdown.classList.contains('hidden')) {
+                    langDropdown.classList.add('hidden');
+                }
+            }
+        }
+
+
+        // --- LÓGICA DAS ABAS ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const clickedButton = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            }
+        }
+
+        function copyToClipboard() { console.log("Copiado para a área de transferência."); }
+        function downloadTranslation() { console.log("Download iniciado."); }
+        function downloadAllFiles() { console.log("Download de todos os arquivos iniciado."); }
+        function searchDictionary() { console.log("Buscando no dicionário..."); }
+        function searchCorpus() { console.log("Buscando no corpus..."); }
+
+        
+
+    // ============================================
+    // LÓGICA DE DOWNLOAD (JSON E CSV)
+    // ============================================
+
+    function triggerDownload(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // --- Funções de Download JSON ---
+    function downloadDictJSON() { triggerDownload(new Blob([JSON.stringify(currentData.dict, null, 2)], { type: 'application/json' }), 'dict_bidayo.json'); }
+    function downloadCorpusJSON() { triggerDownload(new Blob([JSON.stringify(currentData.corpus, null, 2)], { type: 'application/json' }), 'bidayo.json'); }
+    function downloadGrammarJSON() { triggerDownload(new Blob([JSON.stringify(currentData.grammar, null, 2)], { type: 'application/json' }), 'grammar_rules.json'); }
+
+    // --- Funções de Download CSV ---
+    function downloadDictCSV() {
+        const headers = 'word,translation\n';
+        const rows = Object.entries(currentData.dict).map(([word, trans]) => `"${word.replace(/"/g, '""')}","${trans.replace(/"/g, '""')}"`).join('\n');
+        triggerDownload(new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' }), 'dict_bidayo.csv');
+    }
+
+    function downloadCorpusCSV() {
+        const headers = 'source,target\n';
+        const rows = (currentData.corpus.pairs || []).map(p => `"${p.source.replace(/"/g, '""')}","${p.target.replace(/"/g, '""')}"`).join('\n');
+        triggerDownload(new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' }), 'bidayo.csv');
+    }
+
+    function downloadGrammarCSV() {
+        const headers = 'rule,explanation,example_english,example_bidaio\n';
+        const rows = (currentData.grammar.rules || []).map(r => `"${r.rule.replace(/"/g, '""')}","${r.explanation.replace(/"/g, '""')}","${r.example_english.replace(/"/g, '""')}","${r.example_bidaio.replace(/"/g, '""')}"`).join('\n');
+        triggerDownload(new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' }), 'grammar_rules.csv');
+    }
+
+    async function downloadAllFiles() {
+        downloadDictJSON();
+        await new Promise(r => setTimeout(r, 200));
+        downloadCorpusJSON();
+        await new Promise(r => setTimeout(r, 200));
+        downloadGrammarJSON();
+    }
+
+
+        // --- INICIALIZAÇÃO DA PÁGINA ---
+        document.addEventListener('DOMContentLoaded', () => {
+            changeLanguage(currentLanguage); // Define o idioma inicial
+            switchTab('translator'); // Define a aba inicial
+        });
+    </script>
+
+
+    <script src="script.js"></script>
+    <script src="translator.js"></script>
+</body>
+
+</html>

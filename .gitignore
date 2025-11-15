@@ -1,0 +1,24 @@
+# Arquivo de variáveis de ambiente - NUNCA ENVIE ESTE ARQUIVO!
+.env
+
+# Pasta do ambiente virtual do Python
+.venv/
+venv/
+env/
+
+# Arquivos de cache e compilados do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Arquivos de configuração de IDEs e editores
+.vscode/
+.idea/
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de log (caso sejam gerados)
+*.log
