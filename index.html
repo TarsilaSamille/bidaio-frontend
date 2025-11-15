@@ -84,6 +84,9 @@
             <button class="tab-button" onclick="switchTab('corpus')" data-translate-key="tab_corpus">Corpus</button>
             <button class="tab-button" onclick="switchTab('grammar')"
                 data-translate-key="tab_grammar">Gramática</button>
+            <button class="tab-button" onclick="switchTab('history')"
+                data-translate-key="tab_history">Histórico</button>
+
         </div>
 
         <!-- TAB 1: TRADUTOR -->
@@ -122,15 +125,6 @@
                                 <p id="translationText"
                                     class="text-xl font-serif text-primary-dark bg-neutral-bg p-6 rounded-md border border-neutral-border">
                                 </p>
-                            </div>
-                            <div class="mb-8">
-                                <label class="block text-sm font-semibold text-neutral-text mb-3"
-                                    data-translate-key="correction_label">Sugerir Correção</label>
-                                <textarea id="correctionText" data-translate-key="placeholder_correction"
-                                    placeholder="Se a tradução pode ser melhorada, por favor, sugira uma correção aqui..."
-                                    class="w-full h-24 p-4 rounded-md border border-neutral-border bg-white focus:outline-none focus:ring-2 focus:ring-primary-accent resize-none"></textarea>
-                                <button onclick="submitCorrection()" class="secondary-button w-full mt-3 py-2"
-                                    data-translate-key="send_correction_button">Enviar Correção</button>
                             </div>
                             <details class="border-t border-neutral-border pt-6">
                                 <summary
@@ -251,10 +245,22 @@
                 </div>
             </div>
         </div>
+        <div id="tab-history" class="tab-content hidden">
+            <div class="formal-card p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-serif" data-translate-key="history_title">Histórico de Traduções</h2>
+                    <button class="secondary-button py-2 px-4" onclick="fetchHistory()">Atualizar</button>
+                </div>
+                <div id="historyContainer" class="space-y-6">
+                    <p class="text-gray-600 italic" data-translate-key="loading_history">Carregando histórico...</p>
+                </div>
+            </div>
+        </div>
     </div>
 
+
     <script>
-    
+
         document.addEventListener('DOMContentLoaded', () => {
             changeLanguage(currentLanguage); // Define o idioma inicial
             switchTab('translator'); // Define a aba inicial
@@ -268,6 +274,7 @@
     <script src="js/dicionario.js"></script>
     <script src="js/corpus.js"></script>
     <script src="js/gramatica.js"></script>
+    <script src="js/history.js"></script>
     <script src="js/utils.js"></script>
 </body>
 

@@ -53,6 +53,10 @@ function switchTab(tabName) {
 
     event.target.classList.add('active');
     event.target.classList.remove('inactive');
+
+    if (tabName === 'history') {
+        fetchHistory();
+    }
 }
 
 

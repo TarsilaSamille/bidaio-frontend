@@ -60,20 +60,15 @@ async function handleTranslate() {
             body: JSON.stringify({ text: inputText })
         });
 
-        // --- PEQUENA MELHORIA NO TRATAMENTO DE ERRO ---
-        // Ler o corpo da resposta apenas uma vez.
         const responseData = await response.json();
 
         if (!response.ok) {
-            // Usa a resposta já lida para obter a mensagem de erro
             throw new Error(responseData.error || `Erro de Servidor: ${response.status}`);
         }
 
         console.log("✅ Resposta do servidor:", responseData);
 
         if (responseData.success) {
-            // --- A MUDANÇA PRINCIPAL ESTÁ AQUI ---
-            // 'responseData.result' JÁ É o objeto que queremos. Não precisa de JSON.parse.
             const translationResult = responseData.result;
 
             console.log("✅ Tradução recebida:", translationResult);
@@ -81,13 +76,11 @@ async function handleTranslate() {
             currentTranslation = translationResult;
             displayResult(currentTranslation);
 
-            // Acessa a propriedade diretamente do objeto 'translationResult'
             document.getElementById("fullPromptText").textContent = translationResult.full_prompt_for_debug || "N/A";
 
             showExamples(inputText);
             updateAPIStatus("✅ Tradução concluída com sucesso");
         } else {
-            // 'responseData.error' deve conter a mensagem de erro do servidor
             throw new Error(responseData.error || "Erro na tradução");
         }
 
@@ -118,9 +111,6 @@ function displayResult(result) {
     // Raciocínio
     const reasoning = result.reasoning || result.explanation || "N/A";
     document.getElementById("reasoningText").textContent = reasoning;
-
-    // Limpar campo de correção
-    document.getElementById("correctionText").value = "";
 }
 
 

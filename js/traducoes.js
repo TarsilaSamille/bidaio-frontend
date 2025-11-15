@@ -164,7 +164,7 @@ function changeLanguage(lang) {
 
     // Fecha o dropdown após a seleção
     langDropdown.classList.add('hidden');
-    document.documentElement.lang = lang.split('-')[0]; // Atualiza o atributo lang do HTML
+    document.documentElement.lang = lang.split('-')[0];
 }
 
 // Fecha o dropdown se clicar fora dele
