@@ -51,9 +51,11 @@ function switchTab(tabName) {
         btn.classList.add('inactive');
     });
 
-    event.target.classList.add('active');
-    event.target.classList.remove('inactive');
-
+    if (event.target.classList !== undefined) {
+        event.preventDefault();
+        event.target.classList.add('active');
+        event.target.classList.remove('inactive');
+    }
     if (tabName === 'history') {
         fetchHistory();
     }

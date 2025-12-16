@@ -1,12 +1,9 @@
-// ============================================
-// CONFIGURAÇÃO DO SERVIDOR
-// ============================================
+import { RAGPromptGenerator } from './rag-translator.js';
 
-const API_BASE_URL = "http://localhost:5000/api";
 // ============================================
 // CARREGAMENTO DOS DADOS
 // ============================================
-
+let generator;
 let currentData = {
     dict: {},
     corpus: { pairs: [] },
@@ -36,8 +33,16 @@ function initializeApp() {
         displayCorpus();
         displayGrammar();
     }, 500);
-}
 
+    const apiStatusElement = document.getElementById('apiStatus');
+
+    // 2. Create the generator instance and pass the ACTUAL ELEMENT.
+    generator = new RAGPromptGenerator(apiStatusElement);
+
+    // 3. Start initializing the model in the background. It will update the apiStatusElement.
+    generator.initialize();
+
+}
 
 async function handleTranslate() {
     const inputText = document.getElementById("inputText").value.trim();
@@ -52,12 +57,18 @@ async function handleTranslate() {
     btn.textContent = "⏳ Traduzindo...";
 
     try {
-        console.log("📝 Enviando para tradução:", inputText);
+
+        await generator.initialize(); // This will be instant if already initialized.
+
+        // The generator will now update the button text to show its progress
+        const prompt = await generator.buildPrompt(inputText);
+
+        btn.textContent = 'Enviando para o LLM...';
 
         const response = await fetch(`${API_BASE_URL}/translate`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: inputText })
+            body: JSON.stringify({ original_text: inputText, prompt: prompt })
         });
 
         const responseData = await response.json();
@@ -242,3 +253,4 @@ function showExamples(inputText) {
 // ============================================
 
 document.addEventListener("DOMContentLoaded", initializeApp);
+window.handleTranslate = handleTranslate;
